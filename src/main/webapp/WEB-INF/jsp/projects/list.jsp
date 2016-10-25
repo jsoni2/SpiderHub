@@ -58,7 +58,6 @@ th {
 					</c:if></td>
 				<td>${project.projectType }</td>
 				<td><a href="view.html?id=${project.id}">View</a> | <a
-					href="view/${project.id}.html">View2</a> | <a
 					href="edit.html?id=${project.id }">Edit</a></td>
 			</tr>
 		</c:forEach>

@@ -36,4 +36,14 @@ public class UserDaoImpl implements UserDao {
 		return users.size() == 0 ? null : users.get(0);
 	}
 
+	@Override
+	public List<User> getUsertoAddInProject() {
+		
+		String query = "from User u where u.userRole = 1002";
+		
+		return entityManager.createQuery(query, User.class).getResultList();
+
+		
+	}
+
 }

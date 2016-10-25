@@ -46,5 +46,7 @@ th {
 		</tr>
 
 	</table>
+	<a href = "addUser.html?id=${project.id}">Add User In Project</a>
+
 </body>
 </html>
