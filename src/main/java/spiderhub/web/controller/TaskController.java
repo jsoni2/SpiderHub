@@ -1,5 +1,6 @@
 package spiderhub.web.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class TaskController {
 	}
 
 	@RequestMapping(value = "/task/add.html", method = RequestMethod.GET)
-	public String add(@RequestParam Integer id , ModelMap models) {
+	public String add( ModelMap models) {
 		models.put("task", new Task());
 		return "task/add";
 	}
@@ -55,6 +56,7 @@ public class TaskController {
 	public String add(@ModelAttribute Task task) {
 
 		// save user to database
+		task.setCreateDate(new Date());
 		task = taskDao.saveTask(task);
 		// redirect to user list
 		return "redirect:list.html";
