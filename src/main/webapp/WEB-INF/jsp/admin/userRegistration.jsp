@@ -85,9 +85,9 @@
 								</div>
 							</div>
 							<input class="btn btn-primary" type="submit" name="register"
-								value="Register Me">
+								value="ADD User.">
 							<hr />
-							Already Registered ? <a href="login.html">Login here</a>
+
 
 						</form:form>
 					</div>
