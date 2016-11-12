@@ -168,7 +168,7 @@ public class ProjectController {
 			SessionStatus sessionStatus) {
 
 		Set<User> detail = projectDao.getProject(id).getUsersRelatedProject();
-		
+
 		String[] chkSms = request.getParameterValues("chksms");
 		int[] value = new int[chkSms.length];
 
@@ -192,10 +192,19 @@ public class ProjectController {
 
 	@RequestMapping(value = "/manager/remove.html")
 	public String userRemove(@RequestParam Integer id, @RequestParam Integer pid) {
-		Set<User> detail = projectDao.getProject(id).getUsersRelatedProject();
-		
-		
-				return "redirect:listProjects.html";
+		Project p = projectDao.getProject(pid);
+		Set<User> detail = p.getUsersRelatedProject();
+		User ruser = null;
+		for (User u : detail) {
+			if (u.getId() == id) {
+				ruser = u;
+				break;
+			}
+		}
+		detail.remove(ruser);
+		p.setUsersRelatedProject(detail);
+		projectDao.saveProject(p);
+		return "redirect:listProjects.html";
 	}
 
 }
