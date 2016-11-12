@@ -3,27 +3,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-<<<<<<< HEAD
-<meta charset="ISO-8859-1">
-<title>Add User In Project</title>
-</head>
-<body>
-<h1>Add User In Project</h1>
-<form:form modelAttribute = "project">
-<table border = '1'>
-<tr>
-<th></th><th>Users</th>
-</tr>
-<tr>
-<c:forEach items="${users}" var="user">
-<td><form:checkbox path = "usersRelatedProject"  value = "${user.id}" /></td>
-<td>${user.userName}</td>
-</c:forEach>
-</tr>
-</table>
-<input type="submit" name = "add" value = "Add" />
-</form:form>
-=======
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -90,6 +69,5 @@
 			</div>
 		</div>
 	</div>
->>>>>>> upstream/janak
 </body>
 </html>

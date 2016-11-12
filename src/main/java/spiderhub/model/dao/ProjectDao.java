@@ -5,6 +5,7 @@ import java.util.List;
 import spiderhub.model.Project;
 
 public interface ProjectDao {
+	
 	Project getProject(Integer id);
 
 	List<Project> getProjects();
@@ -12,6 +13,7 @@ public interface ProjectDao {
 	Project saveProject(Project project);
 	
 	List<Project> getProjectofManager(Integer id);
+	
 	
 
 	

@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,11 +26,9 @@ public class UserDaoImpl implements UserDao {
 
 	@Override
 	public User getUserByUsername(String userName) {
-		String query = "from User u left join fetch u.userRole " + "where lower(userName) = :userName and u.isDelete= 'false' ";
+		String query = "from User u left join fetch u.userRole "
+				+ "where lower(userName) = :userName and u.isDelete= 'false' ";
 
-		// List<User> users = entityManager.createQuery(query,
-		// User.class).setParameter("emailAddress", emailAddress.toLowerCase())
-		// .getResultList();
 		List<User> users = entityManager.createQuery(query, User.class).setParameter("userName", userName.toLowerCase())
 				.getResultList();
 
@@ -56,9 +55,22 @@ public class UserDaoImpl implements UserDao {
 	@Override
 	public List<User> getUsrToAssignTask(Integer id) {
 
-		//String query = "from User u where u.projects.id=:id";
+		// String query = "from User u where u.projects.id=:id";
 		String query = "from Project where id = :id";
 		return entityManager.createQuery(query, User.class).setParameter("id", id).getResultList();
+	}
+
+	@Override
+	@Transactional
+	public User delete(Integer id,Integer pid) {
+		
+
+		String hqlDelete = "delete usersRelatedProject u where u.projects_id  = :id and u.usersrelatedproject_id = :pid";
+		// or String hqlDelete = "delete Customer where name = :oldName";
+		return  null;
+				
+				
+		
 	}
 
 }
