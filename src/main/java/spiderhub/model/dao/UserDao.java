@@ -10,14 +10,14 @@ public interface UserDao {
 
 	User getUserByUsername(String userName);
 
+
 	User getUser(Integer id);
 
 	List<User> getUsers();
-
-	List<User> getUserToaddInProject();
-
-	List<User> getUsrToAssignTask(Integer id);
 	
-	User delete(Integer id, Integer pid);
+	List<User> getUserToaddInProject();
+	
+	List<User> getUsrToAssignTask(Integer id);
 
+	
 }
