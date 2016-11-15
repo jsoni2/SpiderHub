@@ -2,6 +2,7 @@ package spiderhub.web.controller;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -158,17 +159,26 @@ public class ProjectController {
 
 	@RequestMapping(value = "/manager/addUserInProject.html", method = RequestMethod.GET)
 	public String addUser(@RequestParam Integer id, ModelMap models) {
-		models.put("users", userDao.getUserToaddInProject());
+	
+		List<User> projectNotInProject = userDao.getUserToaddInProject();
+		Project project = projectDao.getProject(id);
+		Set<User> detail = project.getUsersRelatedProject();
+		
+		projectNotInProject.removeAll(detail);
+		
+		models.put("users", projectNotInProject);
 		models.put("project", projectDao.getProject(id));
+		
+		
 		return "manager/addUserInProject";
 	}
 
 	@RequestMapping(value = "/manager/addUserInProject.html", method = RequestMethod.POST)
 	public String addUser(@ModelAttribute Project project, HttpServletRequest request, @RequestParam Integer id,
-			SessionStatus sessionStatus) {
+			SessionStatus sessionStatus, ModelMap models) {
 
 		Set<User> detail = projectDao.getProject(id).getUsersRelatedProject();
-
+		
 		String[] chkSms = request.getParameterValues("chksms");
 		int[] value = new int[chkSms.length];
 
@@ -192,18 +202,18 @@ public class ProjectController {
 
 	@RequestMapping(value = "/manager/remove.html")
 	public String userRemove(@RequestParam Integer id, @RequestParam Integer pid) {
-		Project p = projectDao.getProject(pid);
-		Set<User> detail = p.getUsersRelatedProject();
-		User ruser = null;
+		Project project = projectDao.getProject(pid);
+		Set<User> detail = project.getUsersRelatedProject();
+		User removeUser = null;
 		for (User u : detail) {
 			if (u.getId() == id) {
-				ruser = u;
+				removeUser = u;
 				break;
 			}
 		}
-		detail.remove(ruser);
-		p.setUsersRelatedProject(detail);
-		projectDao.saveProject(p);
+		detail.remove(removeUser);
+		project.setUsersRelatedProject(detail);
+		projectDao.saveProject(project);
 		return "redirect:listProjects.html";
 	}
 

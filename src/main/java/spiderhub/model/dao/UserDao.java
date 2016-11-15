@@ -20,4 +20,5 @@ public interface UserDao {
 	List<User> getUsrToAssignTask(Integer id);
 
 	
+	
 }

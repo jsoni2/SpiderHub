@@ -16,7 +16,7 @@
 		<nav>
 			<ul class="nav nav-pills pull-right">
 				<li role="presentation" class="active"><a href="../index.html">Home</a></li>
-				
+
 			</ul>
 		</nav>
 
@@ -28,10 +28,7 @@
 			<th>ID</th>
 			<th>Name</th>
 			<th>Desciption</th>
-			
 			<th>Created By</th>
-			
-			
 			<th>Project Type</th>
 			<th>Operation</th>
 		</tr>
@@ -40,15 +37,12 @@
 				<td>${project.id }</td>
 				<td>${project.projectName }</td>
 				<td>${project.projectDescription }</td>
-				
 				<td>${project.createdUser.userName }</td>
-				
-				
 				<td>${project.projectType.projectType }</td>
 				<td><a href="viewProject.html?id=${project.id}">View</a></td>
 			</tr>
 		</c:forEach>
 	</table>
-	
+
 </body>
 </html>
