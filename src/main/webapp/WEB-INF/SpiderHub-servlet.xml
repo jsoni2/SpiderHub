@@ -20,4 +20,16 @@
 		<property name="suffix" value=".jsp" />
 	</bean>
 
+
+	<bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename" value="messages" />
+	</bean>
+
+	<!-- <bean id="jsonView"
+		class="org.springframework.web.servlet.view.json.MappingJackson2JsonView" />
+
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver" /> -->
+
 </beans>
