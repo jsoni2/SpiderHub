@@ -10,6 +10,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -244,6 +246,9 @@ public class TaskController {
 	// optional required = false
 	public String memberView(@RequestParam(required = false) Integer tid, @ModelAttribute Comment comment,
 			ModelMap models, HttpServletRequest request, HttpServletResponse response) {
+	
+		
+		
 		if ("GET".equals(request.getMethod())) {
 			// get user from database and pass it to JSP
 			models.put("task", taskDao.getTask(tid));
@@ -328,10 +333,15 @@ public class TaskController {
 	}
 
 	@RequestMapping("/member/download.html")
-	public String download(@RequestParam String file, HttpServletResponse response) throws IOException {
+	public String download(@RequestParam String fileNameWithType, @RequestParam Integer fileId,
+			HttpServletResponse response) throws IOException {
 
 		// read in the file
-		String fullPath = "/" + file;
+		String fullPath = "/" + fileNameWithType;
+		response.reset();
+		response.setHeader("Content-Length", String.valueOf(fileDao.getFile(fileId).getFileSize()));
+		response.setContentType(new MimetypesFileTypeMap().getContentType(fileNameWithType));
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + fileNameWithType + "\"");
 
 		FileInputStream in = new FileInputStream(new File(getFileDirectory(), fullPath));
 		OutputStream out = response.getOutputStream();
@@ -345,7 +355,8 @@ public class TaskController {
 		in.close();
 
 		return null;
-
 	}
+	
+	
 
 }
