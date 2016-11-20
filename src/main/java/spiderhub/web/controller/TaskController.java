@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -34,10 +33,12 @@ import org.springframework.web.multipart.MultipartFile;
 import spiderhub.model.Comment;
 import spiderhub.model.Project;
 import spiderhub.model.Task;
+import spiderhub.model.TaskActivity;
 import spiderhub.model.User;
 import spiderhub.model.dao.CommentDao;
 import spiderhub.model.dao.FileDao;
 import spiderhub.model.dao.ProjectDao;
+import spiderhub.model.dao.TaskActivityDao;
 import spiderhub.model.dao.TaskDao;
 import spiderhub.model.dao.TaskPriorityDao;
 import spiderhub.model.dao.TaskStatusDao;
@@ -45,6 +46,9 @@ import spiderhub.model.dao.UserDao;
 
 @Controller
 public class TaskController {
+
+	@Autowired
+	private TaskActivityDao taskActivityDao;
 
 	@Autowired
 	private TaskDao taskDao;
@@ -367,4 +371,45 @@ public class TaskController {
 		return null;
 	}
 
+	// start Activity
+	@RequestMapping(value = "/member/viewActivity.html", method = { RequestMethod.GET, RequestMethod.POST })
+	// optional required = false
+	public String viewActivity(@RequestParam(required = false) Integer tid, @ModelAttribute TaskActivity taskActivity,
+			@RequestParam(required = false, value = "action") String action, ModelMap models,
+			HttpServletRequest request, HttpServletResponse response) {
+		if ("GET".equals(request.getMethod())) {
+
+			// for display of activiies
+			models.put("activityModel", taskActivityDao.getTaskActivityFromRelatedTask(tid));
+
+		} else if ("POST".equals(request.getMethod())) {
+
+			if (action != null && action.equals("start")) {
+				taskActivity = new TaskActivity();
+				taskActivity.setStartTime(new Date());
+				taskActivity.setComplete(false);
+				taskActivity.setActivityOfTask(taskDao.getTask(tid));
+				Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+				User User = (User) auth.getPrincipal();
+				int uid = User.getId();
+				taskActivity.setActivityOfTaskByUser(userDao.getUser(uid));
+				taskActivity = taskActivityDao.saveTaskActivity(taskActivity);
+				models.put("activityId", taskActivity.getId());
+			} else if (action != null && action.equals("stop")) {
+				String activityId = request.getParameter("activityId");
+				int id = 0;
+				if (activityId != null && !activityId.isEmpty()) {
+					id = Integer.parseInt((request.getParameter("activityId")));
+				}
+				System.out.println("jehkuiwjefhkerhujid: " + id);
+				taskActivity = taskActivityDao.getTaskActivity(id);
+				taskActivity.setEndTime(new Date());
+				taskActivity = taskActivityDao.saveTaskActivity(taskActivity);
+			}
+
+		}
+		models.put("activityModel", taskActivityDao.getTaskActivityFromRelatedTask(tid));
+
+		return "member/viewActivity";
+	}
 }
