@@ -53,6 +53,9 @@
 							Files</a></td>
 
 				</c:if>
+
+
+
 				<td><c:if test="${task.statusTasks.id==1 }">
 						<a href="viewActivity.html?tid=${task.id}">start Activity
 							Files</a>
@@ -81,7 +84,7 @@
 					</a>
 
 				</c:forEach>
-				
+
 				<!-- <a href="#" class="list-group-item"> <span class="badge">4
 							minutes ago</span> <i class="fa fa-fw fa-comment"></i> Commented on a
 						post
