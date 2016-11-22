@@ -1,5 +1,6 @@
 package spiderhub.model.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import spiderhub.model.Task;
@@ -14,7 +15,19 @@ public interface TaskDao {
 	List<Task> getTaskByProject(Integer id);
 
 	List<Task> getTaskOfMemberByProject(Integer uId, Integer pId);
+	
+	long getCountOfOngoingTaskOfMemberByDate(Integer uId, Date startDate );
 
+
+	// to get tasks inside a project within past task
+	List<Task> getTasksWeeklyWithinProject(Integer pid, Date start, Date end);
+
+	List<Task> getAllTaskAccordingToHIGHPriorityWithinAProject(Integer uid);
+
+	List<Task> getAllTaskAccordingToMEDIUMPriorityWithinAProject(Integer uid);
+	List<Task> getAllTaskAccordingToLOWPriorityWithinAProject(Integer uid);
+
+	
 	// to get no of ongoing task
 	long getNoOfOngoingTask(Integer uId);
 
