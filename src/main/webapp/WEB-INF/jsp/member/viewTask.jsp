@@ -4,6 +4,87 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
+	
+<script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+<link rel="stylesheet" href="<%=request.getContextPath()%>/countup/jquery.countup.css" />
+<script src="<%=request.getContextPath()%>/countup/jquery.countup.js"></script>
+<script type="text/javascript">
+function addComment() {
+	var cmt = $("input[name='comment']").val();
+		var taskid = $("#task").val();
+		$.ajax({	
+			type : "POST",
+			url : "comment.html",
+			datatype : "json",
+			data : {"desc" :  cmt, "taskId" : taskid}, 
+					success : function(data) {
+						window.location.reload();
+					}
+				});
+	}
+$(function(){
+	
+	$("#cmtform").dialog({
+		autoOpen : false,
+		buttons : {
+			"Comment" : function() {
+					addComment();
+				$(this).dialog("close");
+			}
+		}
+	});
+	
+	$("#addcmt").click(function() {
+		$("form")[0].reset();
+		$("#cmtform").dialog("open");
+	});
+})
+function activity(){
+	Addactivity();
+	$("#start").hide();
+	$("#end").css({'display':'block'});
+	AddTimer();
+}
+function endActivity(){
+	$.ajax({
+		type : 'POST',
+		url : 'endactivity.html',
+		dataType : 'json',
+		data : {},
+		success : function(data) {
+			
+		}
+		})
+		$("#countdown").hide();
+	window.location.reload();
+	$("#start").show();
+	$("#end").css({'display':'none'});
+}
+function Addactivity(){
+	var taskid = $("#tId").val();
+	alert(taskid);
+	$.ajax({
+		type : 'POST',
+		url : 'activity.html',
+		dataType : 'json',
+		
+		data : {
+			task : taskid
+		},
+		success : function(data) {
+		
+		}
+		
+	})
+}
+function AddTimer(){
+
+	$("#countdown").countup();
+	$("#countdown").show();
+}
+</script>
+
+
 <div class="jumbotron">
 	<h2>Task Details</h2>
 	<table class="table table-hover">
@@ -24,6 +105,7 @@
 			<td>${project.createdUser.userName}</td>
 		</tr>
 	</table>
+	<div id="countdown" ></div>
 	<h2>Task Related Files</h2>
 	<table class="table table-hover">
 		<tr>
@@ -42,40 +124,17 @@
 			</tr>
 		</c:forEach>
 	</table>
-	<form:form modeAttribute="taskActivity">
-
-		<table class="table table-hover">
-			<tr>
-				<th>Activity id</th>
-				<th>Activity complete</th>
-				<th>Activity start Time</th>
-				<th>activity endtime</th>
-				<th>Task Id</th>
-				<th>userName</th>
-			</tr>
-			<c:forEach items="${activityModel}" var="activity">
-				<tr>
-					<td>${activity.id}</td>
-					<td>${activity.complete}</td>
-					<td>${activity.startTime}</td>
-					<td>${activity.endTime}</td>
-					<td>${activity.activityOfTask.id}</td>
-					<td>${activity.activityOfTaskByUser.userName}</td>
-				</tr>
-			</c:forEach>
-		</table>
-		<c:if test="${task.statusTasks.id==1 && empty activityId}">
+		<div id = "start">
 			<input class="btn btn-primary" type="submit" name="action"
-				value="Start Working" />
-			<input type="hidden" name="activityId" value="${activityId}"></input>
-		</c:if>
-		<c:if test="${task.statusTasks.id==1 && not empty activityId}">
-			<input type="hidden" name="activityId" value="${activityId}"></input>
-
+				value="Start Working" onclick="activity();"/>
+			<input type="hidden" id="tId" value="${task.id}"></input>
+		</div>
+		
+		<div id = "end" style = "display:none">
 			<input class="btn btn-primary" type="submit" name="action"
-				value="Take a Break"> </input>
-		</c:if>
-	</form:form>
+				value="Take a Break" onclick="endActivity()"> </input>
+		</div>
+
 	<h2>Comments on task</h2>
 	<c:if test="${not empty comments}">
 		<c:forEach items="${comments}" var="c">
@@ -84,13 +143,15 @@
 
 		</c:forEach>
 	</c:if>
-	<form:form modelAttribute="comment" role="form">
-		<form:textarea path="commentDesc" rows="2" cols="30"
-			class="form-control" required="required" />
-		<input type="hidden" name="task" value="${task.id}" />
-		<input class="btn btn-primary" type="submit" name="action"
-			value="Comment">
-	</form:form>
+
+	<button id="addcmt">Add Comment</button>
+	<div id="cmtform">
+		<form>
+			<input type="text" name = "comment" />
+			<input type="hidden" id = "task" value = "${task.id}" />
+			<input name="id" type="hidden" />
+		</form>
+	</div>
 	<c:if test="${task.statusTasks.id==1 && empty activityId}">
 		<a href="doneTask.html?tid=${task.id}&pid=${project.id}"><input
 			name="action" type="submit" class="btn btn-warning"
