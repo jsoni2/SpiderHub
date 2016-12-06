@@ -81,9 +81,16 @@ public class ProjectController {
 		models.put("projects", projectDao.getProjectofManager(User.getId()));
 		return "manager/listProjects";
 	}
-
+	
 	@RequestMapping("/manager/report.html")
 	public String projectreport(ModelMap models, @RequestParam Integer id) {
+		models.put("project", projectDao.getProject(id));
+		models.put("tasks", projectDao.getProject(id).getTasks());
+		return "manager/report";
+	}
+
+	@RequestMapping("/manager/weeklyreport.html")
+	public String projectreportweekly(ModelMap models, @RequestParam Integer id) {
 		models.put("project", projectDao.getProject(id));
 		models.put("tasks", projectDao.getProject(id).getTasks());
 
@@ -120,11 +127,26 @@ public class ProjectController {
 		}
 
 		models.put("tasksWeekly", tasksWeekly);
-
 		models.put("totalHourArrayWeekly", totalHourArrayWeekly);
 		models.put("totalHourArraySumWeekly", totalHourArraySumWeekly);
 
-		return "manager/report";
+		return "manager/weeklyreport";
+	}
+	
+	@RequestMapping(value = "/manager/getprotype.html", method = RequestMethod.GET)
+	@ResponseBody
+	public String getEmail(@RequestParam String typeId, HttpServletResponse response) 
+			throws JsonGenerationException, JsonMappingException, IOException {
+		
+		String check = "false";
+		if(projecttypeDao.getPerojectType(Integer.parseInt(typeId)).getProjectType().equals("Software Project")){
+			check = "true";
+		}
+		ObjectMapper mapper = new ObjectMapper();
+		response.setContentType("application/json");
+       mapper.writeValue(response.getWriter(), check);
+
+		return null ;
 	}
 
 	@RequestMapping("/member/listProjects.html")
@@ -307,12 +329,14 @@ public class ProjectController {
 			models.put("projecttype", projecttypeDao.getProjectType());
 			return "manager/addProject";
 		}
+		
 		project.setProjectType(projecttypeDao.getPerojectType(Integer.parseInt(request.getParameter("projecttype"))));
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User User = (User) auth.getPrincipal();
 		int userId = User.getId();
 		project.setCreatedUser(userDao.getUser(userId));
 		project.setCreatedDate(new Date());
+
 		project = projectDao.saveProject(project);
 		return "redirect:listProjects.html";
 	}

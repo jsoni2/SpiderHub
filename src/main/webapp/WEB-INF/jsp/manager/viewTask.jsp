@@ -1,5 +1,41 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<link rel="stylesheet"
+	href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="http://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script type="text/javascript" >
+function addComment() {
+	var cmt = $("input[name='comment']").val();
+		var taskid = $("#task").val();
+		$.ajax({	
+			type : "POST",
+			url : "comment.html",
+			datatype : "json",
+			data : {"desc" :  cmt, "taskId" : taskid}, 
+					success : function(data) {
+						window.location.reload();
+					}
+				});
+	}
+$(function(){
+	
+	$("#cmt-form").dialog({
+		autoOpen : false,
+		buttons : {
+			"Comment" : function() {
+					addComment();
+				$(this).dialog("close");
+			}
+		}
+	});
+	
+	$("#add").click(function() {
+		$("form")[0].reset();
+		$("#cmt-form").dialog("open");
+	});
+})
+</script>
 <div class="jumbotron">
 	<table class="table table-hover">
 		<tr>
@@ -38,19 +74,29 @@
 		</c:forEach>
 	</table>
 
+<div id = comments>
 	<c:if test="${not empty comments}">
 		<c:forEach items="${comments}" var="c">
-			<p>${c.userComment.userName}</p>
-			<br />
-			<p>${c.commentDesc}</p>
+			<h4>${c.userComment.userName}:${c.commentDesc}</h4>
 		</c:forEach>
 	</c:if>
-	<form:form modelAttribute="comment" role="form">
+	</div>
+	<%-- <form:form modelAttribute="comment" role="form">
 		<form:textarea path="commentDesc" rows="2" cols="30"
 			class="form-control" required="required" />
 		<input type="hidden" name="task" value="${task.id}" />
 		<input class="btn btn-primary" type="submit" name="action"
 			value="Comment">
-	</form:form>
+	</form:form> --%>
+	<button id="add">Add Comment</button>
+	
+	
+	<div id="cmt-form">
+		<form>
+			<input type="text" name = "comment" />
+			<input type="hidden" id = "task" value = "${task.id}" />
+			<input name="id" type="hidden" />
+		</form>
+	</div>
 	<a href="assignTask.html?id=${task.id}">Assign</a>
 </div>
