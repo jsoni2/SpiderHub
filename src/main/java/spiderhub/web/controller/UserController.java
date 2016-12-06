@@ -33,6 +33,8 @@ import spiderhub.web.validator.ValidationResponse;
 @SessionAttributes("user")
 public class UserController {
 
+	
+
 	@Autowired
 	private MessageSource messageSource;
 
@@ -62,9 +64,12 @@ public class UserController {
 			res.setStatus("FAIL");
 			List<FieldError> allErrors = bindingResult.getFieldErrors();
 			List<ErrorMessage> errorMesages = new ArrayList<ErrorMessage>();
+			
 			for (FieldError objectError : allErrors) {
 				String message = messageSource.getMessage(objectError, null);
 				errorMesages.add(new ErrorMessage(objectError.getField(), message));
+				
+				
 				System.out.println("error fir=eld: " + objectError.getField() + "   message : " + message
 						+ " get rejected value : " + objectError.getRejectedValue().toString() + " name: "
 						+ objectError.getObjectName() + "  code " + objectError.getCode());
@@ -88,7 +93,7 @@ public class UserController {
 	public String register(@ModelAttribute User user, BindingResult bindingResult, ModelMap models,
 			HttpServletRequest request) {
 
-		if (bindingResult.hasErrors()) { // models.put("user", new User());
+		if (bindingResult.hasErrors()) {
 			models.put("UserRole", roleDao.getUserRoles());
 			System.out.println("validation done");
 			return "userRegistration";
@@ -102,7 +107,7 @@ public class UserController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/userRegistration.html", method = RequestMethod.GET)
+	@RequestMapping(value = "/admin/userRegistration", method = RequestMethod.GET)
 	public String register1(ModelMap models) {
 		models.put("user", new User());
 		models.put("UserRole", roleDao.getUserRoles());
@@ -113,19 +118,18 @@ public class UserController {
 	public String register1(@ModelAttribute User user, BindingResult bindingResult, ModelMap models,
 			HttpServletRequest request) {
 
-		// for validation
-		userValidator.validate(user, bindingResult);
 		if (bindingResult.hasErrors()) {
 			models.put("user", new User());
 			models.put("UserRole", roleDao.getUserRoles());
 			return "admin/userRegistration";
+		} else {
+			user.setUserRole(roleDao.getUserRole(Integer.parseInt(request.getParameter("role"))));
+			user.setDelete(false);
+			user.setCreateDate(new Date());
+			userDao.saveUser(user);
+			models.addAttribute("modalShow", "Saved");
+			return "redirect:userManagement.html";
 		}
-		user.setUserRole(roleDao.getUserRole(Integer.parseInt(request.getParameter("role"))));
-		user.setDelete(false);
-		user.setCreateDate(new Date());
-		userDao.saveUser(user);
-		models.addAttribute("modalShow", "Saved");
-		return "redirect:userManagement.html";
 	}
 
 	@RequestMapping(value = "/manager/userRegistration.html", method = RequestMethod.GET)
